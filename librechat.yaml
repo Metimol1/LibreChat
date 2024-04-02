@@ -1,10 +1,10 @@
 version: 1.0.5
-cache: false
+cache: true
 endpoints:
   custom:
     - name: "VisionCraft"
       apiKey: "${VisionCraft_API_KEY}"
-      baseURL: "${VisionCraft_API_BASE}"
+      baseURL: "http://my_openai-api:80/v1"
       models:
         default: ["Mixtral-8x7B-Instruct-v0.1", "Mistral-7B-Instruct-v0.1", "llava-1.5-7b-hf", "gemma-7b", "Llama-2-7b-chat-hf", "Llama-2-13b-chat-hf", "Llama-2-70b-chat-hf", "CodeLlama-34b-Instruct-hf", "CodeLlama-70b-Instruct-hf", "starcoder2-15b", "openchat_3.5", "lzlv_70b_fp16_hf", "dolphin-2.6-mixtral-8x7b", "airoboros-70b", "airoboros-l2-70b-gpt4-1.4.1", "pygmalion-13b-4bit-128g"]
         fetch: false
