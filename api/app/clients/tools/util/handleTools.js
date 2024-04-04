@@ -163,7 +163,7 @@ const loadTools = async ({
     google: GoogleSearchAPI,
     wolfram: functions ? StructuredWolfram : WolframAlphaAPI,
     'dall-e': OpenAICreateImage,
-    'stable-diffusion': functions ? StructuredSD : StableDiffusionAPI,
+    'stable-diffusion': StableDiffusionAPI,
     'azure-ai-search': functions ? StructuredACS : AzureAISearch,
     CodeBrew: CodeBrew,
     traversaal_search: TraversaalSearch,
