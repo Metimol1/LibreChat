@@ -6,5 +6,23 @@
     "icon": "https://i.imgur.com/RHsSG5h.png",
     "isAuthRequired": "false",
     "authConfig": []
-  }
+  },
+  {
+    "name": "Stable Diffusion",
+    "pluginKey": "stable-diffusion",
+    "description": "Generate photo-realistic images given any text input.",
+    "icon": "https://i.imgur.com/Yr466dp.png",
+    "authConfig": [
+      {
+        "authField": "SD_WEBUI_URL",
+        "label": "VisionCraft API URL",
+        "description": "You need to provide the URL of VisionCraft API."
+      },
+      {
+        "authField": "SD_WEBUI_TOKEN",
+        "label": "VisionCraft API Token",
+        "description": "You need to provide token from VisionCraft API."
+      }
+    ]
+  },
 ]
