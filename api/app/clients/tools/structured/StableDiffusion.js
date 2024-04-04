@@ -32,7 +32,7 @@ class StableDiffusionAPI extends StructuredTool {
     this.description_for_model = `// Generate images and visuals using text.
 // Guidelines:
 // - ALWAYS use {{"prompt": "7+ detailed keywords", "negative_prompt": "7+ detailed keywords"}} structure for queries.
-// - ALWAYS include the markdown url in your final response to show the user: ![caption](/images/id.png)
+// - ALWAYS include the markdown url in your final response to show the user: ![caption](https://example.com/images/id.png)
 // - Visually describe the moods, details, structures, styles, and/or proportions of the image. Remember, the focus is on visual attributes.
 // - Craft your input by "showing" and not "telling" the imagery. Think in terms of what you'd want to see in a photograph or a painting.
 // - Here's an example for generating a realistic portrait photo of a man:
@@ -55,16 +55,8 @@ class StableDiffusionAPI extends StructuredTool {
     });
   }
 
-  replaceNewLinesWithSpaces(inputString) {
-    return inputString.replace(/\r\n|\r|\n/g, ' ');
-  }
-
-  getMarkdownImageUrl(imageName) {
-    const imageUrl = path
-      .join(this.relativePath, this.userId, imageName)
-      .replace(/\\/g, '/')
-      .replace('public/', '');
-    return `![generated image](/${imageUrl})`;
+  getMarkdownImageUrl(imageUrl) {
+    return `![generated image](${imageUrl})`;
   }
 
   getServerURL() {
@@ -90,36 +82,17 @@ class StableDiffusionAPI extends StructuredTool {
     const payload = {
       token: token,
       model: 'juggernautXL',
-      prompt: input.split('|')[0],
-      negative_prompt: input.split('|')[1],
-      sampler: 'DPM++ 2M Karras',
+      prompt,
+      negative_prompt,
+      sampler: 'Euler',
       cfg_scale: 7,
-      steps: 50,
+      steps: 30,
       width: 1024,
       height: 1024,
     };
-    const generationResponse = await axios.post(`${url}/generate-xl`, payload, { responseType: 'arraybuffer' });
-    const image = generationResponse.data;
-
-    /** @type {{ height: number, width: number, seed: number, infotexts: string[] }} */
-
-    const file_id = uuidv4();
-    const imageName = `${file_id}.png`;
-    const { imageOutput: imageOutputPath, clientPath } = paths;
-    const filepath = path.join(imageOutputPath, this.userId, imageName);
-    this.relativePath = path.relative(clientPath, imageOutputPath);
-
-    if (!fs.existsSync(path.join(imageOutputPath, this.userId))) {
-      fs.mkdirSync(path.join(imageOutputPath, this.userId), { recursive: true });
-    }
-
-    try {
-      await sharp(image)
-        .toFile(filepath);
-      this.result = this.getMarkdownImageUrl(imageName);
-    } catch (error) {
-      logger.error('[StableDiffusion] Error while saving the image:', error);
-    }
+    const generationResponse = await axios.post(`${url}/generate-xl`, payload);
+    const theImageUrl = generationResponse.data.images[0];
+    this.result = this.getMarkdownImageUrl(theImageUrl);
 
     return this.result;
   }
