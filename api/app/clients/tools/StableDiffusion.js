@@ -45,7 +45,7 @@ Guidelines:
 
   getToken() {
     const token = process.env.SD_WEBUI_TOKEN || '';
-    if (!url) {
+    if (!token) {
       throw new Error('Missing SD_WEBUI_TOKEN environment variable.');
     }
     return token;
