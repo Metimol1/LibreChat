@@ -19,7 +19,15 @@ class StableDiffusionCreateImage extends Tool {
 
     this.name = 'stable-diffusion';
     this.description = `You can generate images with 'stable-diffusion'. This tool is exclusively for visual content.`;
-    this.description_for_model = `// Description for stable diffusion...`;
+    this.description = `You can generate images with 'stable-diffusion'. This tool is exclusively for visual content.
+Guidelines:
+- Visually describe the moods, details, structures, styles, and/or proportions of the image. Remember, the focus is on visual attributes.
+- Craft your input by "showing" and not "telling" the imagery. Think in terms of what you'd want to see in a photograph or a painting.
+- It's best to follow this format for image creation:
+"detailed keywords to describe the subject, separated by comma | keywords we want to exclude from the final image"
+- Here's an example prompt for generating a realistic portrait photo of a man:
+"photo of a man in black clothes, half body, high detailed skin, coastline, overcast weather, wind, waves, 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3 | semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, out of frame, low quality, ugly, mutation, deformed"
+- Generate images only once per human query unless explicitly requested by the user`;
 
     let apiKey = fields.STABLE_DIFFUSION_API_KEY ?? this.getApiKey();
 
