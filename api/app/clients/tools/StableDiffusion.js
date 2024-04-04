@@ -10,7 +10,8 @@ class StableDiffusionAPI extends Tool {
   constructor(fields) {
     super();
     this.name = 'stable-diffusion';
-    this.url = fields.SD_WEBUI_URL || this.getServerURL();
+    this.url = this.getServerURL();
+    this.token = this.getToken();
     this.description = `You can generate images with 'stable-diffusion'. This tool is exclusively for visual content.
 Guidelines:
 - Visually describe the moods, details, structures, styles, and/or proportions of the image. Remember, the focus is on visual attributes.
@@ -42,19 +43,29 @@ Guidelines:
     return url;
   }
 
+  getToken() {
+    const token = process.env.SD_WEBUI_TOKEN || '';
+    if (!url) {
+      throw new Error('Missing SD_WEBUI_TOKEN environment variable.');
+    }
+    return token;
+  }
+
   async _call(input) {
     const url = this.url;
     const payload = {
+      token: token,
+      model: 'juggernautXL',
       prompt: input.split('|')[0],
       negative_prompt: input.split('|')[1],
       sampler_index: 'DPM++ 2M Karras',
       cfg_scale: 4.5,
-      steps: 22,
+      steps: 50,
       width: 1024,
       height: 1024,
     };
-    const response = await axios.post(`${url}/sdapi/v1/txt2img`, payload);
-    const image = response.data.images[0];
+    const response = await axios.post(`${url}/generate-xl`, payload, { responseType: 'arraybuffer' });
+    const image = response.data;
 
     const pngPayload = { image: `data:image/png;base64,${image}` };
     const response2 = await axios.post(`${url}/sdapi/v1/png-info`, pngPayload);
