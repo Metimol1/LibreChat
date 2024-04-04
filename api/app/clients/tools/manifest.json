@@ -8,7 +8,7 @@
     "authConfig": []
   },
   {
-    "name": "Stable Diffusion",
+    "name": "SDXL VisionCraft",
     "pluginKey": "stable-diffusion",
     "description": "Generate photo-realistic images given any text input.",
     "icon": "https://i.imgur.com/Yr466dp.png",
@@ -24,5 +24,5 @@
         "description": "You need to provide token from VisionCraft API."
       }
     ]
-  },
+  }
 ]
