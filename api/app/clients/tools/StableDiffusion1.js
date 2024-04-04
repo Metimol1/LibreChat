@@ -18,7 +18,6 @@ class StableDiffusionCreateImage extends Tool {
     }
 
     this.name = 'stable-diffusion';
-    this.description = `You can generate images with 'stable-diffusion'. This tool is exclusively for visual content.`;
     this.description = `You can generate images with 'stable-diffusion'. This tool is exclusively for visual content.
 Guidelines:
 - Visually describe the moods, details, structures, styles, and/or proportions of the image. Remember, the focus is on visual attributes.
