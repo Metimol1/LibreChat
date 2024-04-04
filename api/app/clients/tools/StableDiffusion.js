@@ -67,10 +67,6 @@ Guidelines:
     const response = await axios.post(`${url}/generate-xl`, payload, { responseType: 'arraybuffer' });
     const image = response.data;
 
-    const pngPayload = { image: `data:image/png;base64,${image}` };
-    const response2 = await axios.post(`${url}/sdapi/v1/png-info`, pngPayload);
-    const info = response2.data.info;
-
     // Generate unique name
     const imageName = `${Date.now()}.png`;
     this.outputPath = path.resolve(__dirname, '..', '..', '..', '..', 'client', 'public', 'images');
