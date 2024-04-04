@@ -6,7 +6,6 @@ const StructuredSD = require('./structured/StableDiffusion');
 
 module.exports = {
   availableTools,
-  StableDiffusionAPI,
   SelfReflectionTool,
   ChatTool,
   StructuredSD
