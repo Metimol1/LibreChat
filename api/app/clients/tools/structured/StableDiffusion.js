@@ -27,7 +27,8 @@ class StableDiffusionAPI extends StructuredTool {
     }
 
     this.name = 'stable-diffusion';
-    this.url = fields.SD_WEBUI_URL || this.getServerURL();
+    this.url = this.getServerURL();
+    this.token = this.getToken();
     this.description_for_model = `// Generate images and visuals using text.
 // Guidelines:
 // - ALWAYS use {{"prompt": "7+ detailed keywords", "negative_prompt": "7+ detailed keywords"}} structure for queries.
@@ -74,28 +75,33 @@ class StableDiffusionAPI extends StructuredTool {
     return url;
   }
 
+  getToken() {
+    const token = process.env.SD_WEBUI_TOKEN || '';
+    if (!token) {
+      throw new Error('Missing SD_WEBUI_TOKEN environment variable.');
+    }
+    return token;
+  }
+
   async _call(data) {
     const url = this.url;
+    const token = this.token;
     const { prompt, negative_prompt } = data;
     const payload = {
-      prompt,
-      negative_prompt,
-      sampler_index: 'DPM++ 2M Karras',
-      cfg_scale: 4.5,
-      steps: 22,
+      token: token,
+      model: 'juggernautXL',
+      prompt: input.split('|')[0],
+      negative_prompt: input.split('|')[1],
+      sampler: 'DPM++ 2M Karras',
+      cfg_scale: 7,
+      steps: 50,
       width: 1024,
       height: 1024,
     };
-    const generationResponse = await axios.post(`${url}/sdapi/v1/txt2img`, payload);
-    const image = generationResponse.data.images[0];
+    const generationResponse = await axios.post(`${url}/generate-xl`, payload, { responseType: 'arraybuffer' });
+    const image = generationResponse.data;
 
     /** @type {{ height: number, width: number, seed: number, infotexts: string[] }} */
-    let info = {};
-    try {
-      info = JSON.parse(generationResponse.data.info);
-    } catch (error) {
-      logger.error('[StableDiffusion] Error while getting image metadata:', error);
-    }
 
     const file_id = uuidv4();
     const imageName = `${file_id}.png`;
@@ -108,41 +114,7 @@ class StableDiffusionAPI extends StructuredTool {
     }
 
     try {
-      const buffer = Buffer.from(image.split(',', 1)[0], 'base64');
-      if (this.returnMetadata && this.uploadImageBuffer && this.req) {
-        const file = await this.uploadImageBuffer({
-          req: this.req,
-          context: FileContext.image_generation,
-          resize: false,
-          metadata: {
-            buffer,
-            height: info.height,
-            width: info.width,
-            bytes: Buffer.byteLength(buffer),
-            filename: imageName,
-            type: 'image/png',
-            file_id,
-          },
-        });
-
-        const generationInfo = info.infotexts[0].split('\n').pop();
-        return {
-          ...file,
-          prompt,
-          metadata: {
-            negative_prompt,
-            seed: info.seed,
-            info: generationInfo,
-          },
-        };
-      }
-
-      await sharp(buffer)
-        .withMetadata({
-          iptcpng: {
-            parameters: info.infotexts[0],
-          },
-        })
+      await sharp(image)
         .toFile(filepath);
       this.result = this.getMarkdownImageUrl(imageName);
     } catch (error) {
