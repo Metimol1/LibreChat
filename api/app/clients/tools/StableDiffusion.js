@@ -58,8 +58,8 @@ Guidelines:
       model: 'juggernautXL',
       prompt: input.split('|')[0],
       negative_prompt: input.split('|')[1],
-      sampler_index: 'DPM++ 2M Karras',
-      cfg_scale: 4.5,
+      sampler: 'DPM++ 2M Karras',
+      cfg_scale: 7,
       steps: 50,
       width: 1024,
       height: 1024,
@@ -83,13 +83,7 @@ Guidelines:
     }
 
     try {
-      const buffer = Buffer.from(image.split(',', 1)[0], 'base64');
-      await sharp(buffer)
-        .withMetadata({
-          iptcpng: {
-            parameters: info,
-          },
-        })
+      await sharp(image)
         .toFile(this.outputPath + '/' + imageName);
       this.result = this.getMarkdownImageUrl(imageName);
     } catch (error) {
